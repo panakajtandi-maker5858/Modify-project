@@ -10,23 +10,29 @@ async function uploadSong(req, res) {
 
     const tags = id3.read(songBuffer)
 
-    const [ songFile, posterFile ] = await Promise.all([
-        storageService.uploadFile({
-            buffer: songBuffer,
-            filename: tags.title + ".mp3",
-            folder: "/cohort-2/moodify/songs"
-        }),
-        storageService.uploadFile({
-            buffer: tags.image.imageBuffer,
-            filename: tags.title + ".jpeg",
+const title = tags.title || "Unknown Song"
+const posterBuffer = tags.image?.imageBuffer   // 👈 FIX
+
+const [songFile, posterFile] = await Promise.all([
+    storageService.uploadFile({
+        buffer: songBuffer,
+        filename: title + ".mp3",
+        folder: "/cohort-2/moodify/songs"
+    }),
+
+    //  only upload poster if exists
+    posterBuffer
+        ? storageService.uploadFile({
+            buffer: posterBuffer,
+            filename: title + ".jpeg",
             folder: "/cohort-2/moodify/posters"
         })
-    ])
-
+        : null
+])
     const song = await songModel.create({
         title: tags.title,
         url: songFile.url,
-        posterUrl: posterFile.url,
+        posterUrl: posterFile?.url || "" ,
         mood
     })
 

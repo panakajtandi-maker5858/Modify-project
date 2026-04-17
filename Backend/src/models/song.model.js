@@ -7,11 +7,11 @@ const songSchema = new mongoose.Schema({
     },
     posterUrl: {
         type: String,
-        required: true,
+        default: ""
     },
     title: {
         type: String,
-        required: true
+        default:""
     },
     mood: {
         type: String,

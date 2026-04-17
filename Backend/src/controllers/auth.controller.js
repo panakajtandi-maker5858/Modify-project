@@ -56,6 +56,8 @@ return res.status(201).json({
 
 async function loginUser(req, res){
 
+    const { email, username, password } = req.body 
+
 const user = await userModel.findOne({
     $or : [
         {email} ,
@@ -84,7 +86,7 @@ if(!isPasswordValid){
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: process.env.JWT_SECRET
+            expiresIn: "3d"
         }
     )
 
